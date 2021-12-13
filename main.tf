@@ -136,3 +136,99 @@ metric {
    }
  }
 }
+
+resource "azurerm_eventhub_namespace" "ehn" {
+  name                = "${var.prefix}-ehn"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "Standard"
+  capacity            = 1
+  
+}
+
+resource "azurerm_monitor_diagnostic_setting" "ehn-diag" {
+  name               = "${var.prefix}-ehn-diag"
+  target_resource_id = resource.azurerm_eventhub_namespace.ehn.id
+  log_analytics_workspace_id = resource.azurerm_log_analytics_workspace.ws.id
+   
+
+  log {
+    category = "EventHubVNetConnectionEvent"
+
+    retention_policy {
+     enabled = true
+    } 
+  }
+
+  log {
+    category = "ArchiveLogs"
+
+    retention_policy {
+     enabled = true
+    } 
+  }
+
+   log {
+    category = "OperationalLogs"
+
+    retention_policy {
+     enabled = true
+    }
+   } 
+    
+    log {
+    category = "AutoScaleLogs"
+
+    retention_policy {
+     enabled = true
+     }
+    }
+
+    log {
+    category = "KafkaCoordinatorLogs"
+
+    retention_policy {
+     enabled = true
+     }  
+    }
+
+    log {
+    category = "KafkaUserErrorLogs"
+
+    retention_policy {
+     enabled = true
+     }
+    }
+
+    log {
+    category = "CustomerManagedKeyUserLogs"
+
+    retention_policy {
+     enabled = true
+     }
+    } 
+
+    log {
+    category = "RuntimeAuditLogs"
+
+    retention_policy {
+     enabled = true
+     }
+    }
+
+    log {
+    category = "ApplicationMetricsLogs"
+
+    retention_policy {
+     enabled = true
+     }
+    }
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = true
+    }
+  }
+}
